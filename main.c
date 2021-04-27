@@ -51,4 +51,6 @@ int main()
     free(inputPixels);
     
     return 0;
+
+	//aanpassing
 }

@@ -21,6 +21,8 @@ int main()
 {
     printbinchar(' ');
     return 0;
+
+	//aanpassing
 }
 void printbinchar(char character)
 {

@@ -2,7 +2,7 @@
 * to do:
 * +++grootte uitlezen en aanpssen naar 8bits binair
 * +++cmd argumenten kunnen uitlezen
-* +++txt bestand uitlezen
+* +++txt bestand uitlezen +++array grootte bepalen door bestand
 * ---tekst omvormen naar binair
 * ---grootte van bmp bestand uitlezen
 * ---tekst in bmp bestand verwerken
@@ -19,73 +19,85 @@
 #include <string.h>
 #define BESTAND "./test.txt"
 
+void inlezenTXT();
+int grootteTXT();
 void printbinchar(char);
+void binair_char();
+
+
+char binLetter_8[9] = "";
+
 
 int main(int argc, char* argv[]) {
 	if(argc == 2 && strcmp(argv[1], "--help")==0)
     {
 		printf("-c --> compress\n");
-		printf("-s --> de input text file containing the secret message\n");
+		printf("-s --> het input tekstbestand met de secret message\n");
 		printf("-i --> de input bmp file\n");
 		printf("-o --> output image name\n");
-		printf("EINDE HELP\n");
+		printf("\n");
+		printf("-d --> decompress\n");
+		printf("-i --> input bmp die de secret message bevat\n");
+		printf("-o --> output text file waar het gedecodeerde bericht in komt\n");
+		printf("\n");
+		printf("EINDE HELP\n\n\n");
 	}
 
 	if(argc == 8)
     {
 		//-c -s inputfile.txt -i meme.bmp -o memeOut.bmp
-		printf("test\n");
+		printf("compress\n");
 		printf("%s\n", argv[3]);
 		printf("%s\n", argv[5]);
 		printf("%s\n", argv[7]);
 	}
 
 
-
-    FILE * fp = NULL; 
-
-    fp = fopen(BESTAND, "r");
-    if (fp == NULL)
-    {
-        printf("Can't open file\n");
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        int c;
-        while ((c = getc(fp)) != '#' && c != EOF)putchar(c);
-        printf("The contents of desname string  : %s", c);
-    }
-    
-
-    fclose(fp);
-    return 0;
-
-
-
-
-
-
-
-    /*
-    if (argc == 2) {
-        printf("The argument supplied is %s\n", argv[1]);
-    }
-    else if (argc > 2) {
-        printf("Too many arguments supplied.\n");
-    }
-    else {
-        printf("One argument expected.\n");
-    }
-    */
-
+	inlezenTXT();
     printbinchar('t');
+	binair_char();
     return 0;
 }
 
+
+void inlezenTXT()
+{
+	char* inputtekst = (char*)malloc(grootteTXT());
+	FILE* fp = NULL;
+	fp = fopen(BESTAND, "r");
+	if (fp == NULL)
+	{
+		printf("Can't open file\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		while (fgets(inputtekst, 20, fp) != NULL)
+		printf("\n\n\n%s\n\n\n", inputtekst);
+	}
+	fclose(fp);
+	free(inputtekst);
+}
+
+int grootteTXT()
+{
+	FILE* fp = NULL;
+	fp = fopen(BESTAND, "r");
+	if (fp == NULL)
+	{
+		printf("Can't open file\n");
+		exit(EXIT_FAILURE);
+	}
+	fseek(fp, 0, SEEK_END);
+	int grootte = ftell(fp);
+	fclose(fp);
+	printf("Size is: %d\n", grootte);
+	return grootte;
+}
+
+
 void printbinchar(char character)
 {
-    char binLetter_8[9] = "";
     char binLetter[9];
     _itoa(character, binLetter, 2); //character omzetten naar 2(binair) in binLetter
     printf("Binaire waarde van letter: %s\n", binLetter); //printen binaire waarde van letter meegegeven aan printbinchar();
@@ -103,6 +115,12 @@ void printbinchar(char character)
     }
     strcat(binLetter_8, binLetter);
     printf("Omgezet in 8 bits binair: %s\n", binLetter_8);
+}
+
+void binair_char()
+{
+    char c = strtol(binLetter_8, 0, 2);
+    printf("Letter is: %c \n", c);
 }
 
 

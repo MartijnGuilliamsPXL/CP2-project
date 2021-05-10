@@ -2,9 +2,11 @@
 * to do:
 * +++grootte uitlezen en aanpssen naar 8bits binair
 * +++cmd argumenten kunnen uitlezen
-* +++txt bestand uitlezen +++array grootte bepalen door bestand
+* +++txt bestand uitlezen 
+* +++array grootte bepalen door bestand
 * ---tekst omvormen naar binair
-* ---grootte van bmp bestand uitlezen
+* +++grootte van bmp bestand uitlezen
+* ---letter in bmp bestand verwerken
 * ---tekst in bmp bestand verwerken
 * ---bmp bestand uitlezen
 * ---binair omzetten naar tekst
@@ -18,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #define BESTAND "./test.txt"
+#define BMPINPUTFILE "test 1.bmp"
 
 void inlezenTXT();
 int grootteTXT();
@@ -56,7 +59,65 @@ int main(int argc, char* argv[]) {
 	inlezenTXT();
     printbinchar('t');
 	binair_char();
+
+	//werken wet de bmp file----------------------------------------------------------------------
+
+	//teste of bmp file opent 
+	FILE* inputFilePointer = fopen(BMPINPUTFILE, "rb"); //maak een file pointer naar de afbeelding
+	if (inputFilePointer == NULL) //Test of het open van de file gelukt is!
+	{
+		printf("BMP file kan niet worden geopend %s\n", BMPINPUTFILE);
+		exit(EXIT_FAILURE);
+	}
+
+	unsigned char bmpHeader[54]; // voorzie een array van 54-bytes voor de BMP Header
+	fread(bmpHeader, sizeof(unsigned char), 54, inputFilePointer); // lees de 54-byte header
+
+	//Informatie uit de header (wikipedia)
+	//Haal de hoogte en breedte uit de header
+	int breedte = *(int*)& bmpHeader[18];
+	int hoogte = *(int*)& bmpHeader[22];
+
+	printf("DEBUG info: breedte = %d\n", breedte);
+	printf("DEBUG info: hoogte = %d\n", hoogte);
+
+
+
     return 0;
+}
+
+
+unsigned char* readBMP(char* filename)
+{
+    int i;
+    FILE* f = fopen(filename, "rb");
+    unsigned char info[54];
+
+    // read the 54-byte header
+    fread(info, sizeof(unsigned char), 54, f); 
+
+    // extract image height and width from header
+    int width = *(int*)&info[18];
+    int height = *(int*)&info[22];
+
+    // allocate 3 bytes per pixel
+    int size = 3 * width * height;
+    unsigned char* data = new unsigned char[size];
+
+    // read the rest of the data at once
+    fread(data, sizeof(unsigned char), size, f); 
+    fclose(f);
+
+    for(i = 0; i < size; i += 3)
+    {
+            // flip the order of every 3 bytes
+            unsigned char tmp = data[i];
+            data[i] = data[i+2];
+            data[i+2] = tmp;
+			printf("%hd", data[i]);
+    }
+	printf("test");
+    return data;
 }
 
 
@@ -73,7 +134,7 @@ void inlezenTXT()
 	else
 	{
 		while (fgets(inputtekst, 20, fp) != NULL)
-		printf("\n\n\n%s\n\n\n", inputtekst);
+		printf("\n%s\n\n", inputtekst);
 	}
 	fclose(fp);
 	free(inputtekst);
@@ -85,7 +146,7 @@ int grootteTXT()
 	fp = fopen(BESTAND, "r");
 	if (fp == NULL)
 	{
-		printf("Can't open file\n");
+		printf("Kan bestand niet openen\n");
 		exit(EXIT_FAILURE);
 	}
 	fseek(fp, 0, SEEK_END);
@@ -120,7 +181,7 @@ void printbinchar(char character)
 void binair_char()
 {
     char c = strtol(binLetter_8, 0, 2);
-    printf("Letter is: %c \n", c);
+    printf("Letter is: %c \n\n", c);
 }
 
 

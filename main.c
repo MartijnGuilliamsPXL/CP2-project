@@ -2,7 +2,8 @@
 * to do:
 * +++grootte uitlezen en aanpssen naar 8bits binair
 * +++cmd argumenten kunnen uitlezen
-* +++txt bestand uitlezen +++array grootte bepalen door bestand
+* +++txt bestand uitlezen 
+* +++array grootte bepalen door bestand
 * ---tekst omvormen naar binair
 * ---grootte van bmp bestand uitlezen
 * ---tekst in bmp bestand verwerken

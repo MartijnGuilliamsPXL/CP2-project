@@ -1,5 +1,3 @@
-
-
 /* 
 * to do:
 * +++grootte uitlezen en aanpssen naar 8bits binair
@@ -8,7 +6,7 @@
 * +++array grootte bepalen door bestand
 * ---tekst omvormen naar binair
 * +++grootte van bmp bestand uitlezen
-* ---letter in bmp bestand verwerken
+* +++letter in bmp bestand verwerken (hard gecodeerd)
 * ---tekst in bmp bestand verwerken
 * ---bmp bestand uitlezen
 * ---binair omzetten naar tekst
@@ -17,21 +15,27 @@
 */
 
 
-
+//Libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define BESTAND "./test.txt"
-#define BMPINPUTFILE "./test.bmp"
 
+//Bestanden toekennen
+#define BESTAND "./test.txt"
+#define BMPINPUTFILE "./CP2_Encoded.bmp"
+
+//alle void
+void schrijvenBMP();
+void inlezenBMP();
 void inlezenTXT();
 int grootteTXT();
 void printbinchar(char);
 void binair_char();
-char readBMP(char);
 
+//char arrays
+char binLetter_8[8];
+char* tekst; //grootte variabel maken
 
-char binLetter_8[9] = "";
 
 
 int main(int argc, char* argv[]) {
@@ -58,13 +62,29 @@ int main(int argc, char* argv[]) {
 		printf("%s\n", argv[7]);
 	}
 
-
+	
 	inlezenTXT();
-    printbinchar('t');
+    
+	printbinchar('t');
+	
 	binair_char();
+	
+	inlezenBMP();
 
-	//werken wet de bmp file----------------------------------------------------------------------
+	schrijvenBMP();
 
+    return 0;
+}
+
+void schrijvenBMP()
+{
+	
+}
+
+
+void inlezenBMP()
+{
+	/*
 	//teste of bmp file opent 
 	FILE* inputFilePointer = fopen(BMPINPUTFILE, "rb"); //maak een file pointer naar de afbeelding
 	if (inputFilePointer == NULL) //Test of het open van de file gelukt is!
@@ -84,43 +104,76 @@ int main(int argc, char* argv[]) {
 	printf("DEBUG info: breedte = %d\n", breedte);
 	printf("DEBUG info: hoogte = %d\n", hoogte);
 
-	//printf("%d",
-	readBMP("test 1.bmp");
+	//lezen van de pixels
+	int imageSize = 3 * breedte * hoogte; //ieder pixel heeft 3 byte data: rood, groen en blauw (RGB)
+	unsigned char* inputPixels = (unsigned char*)calloc(imageSize, sizeof(unsigned char)); // allocate een array voor alle pixels
 
-    return 0;
-}
+	fread(inputPixels, sizeof(unsigned char), imageSize, inputFilePointer); // Lees alle pixels (de rest van de file)
+	fclose(inputFilePointer);
+	int plaatsBit = 0;
+	imageSize = 200; //testen tot 200
+	for (int i = 0; i < imageSize - 2; i += 3)
+	{
+		int k;
+		int limiet = 0;
 
-unsigned char* readBMP(char* filename)
-{
-    int i;
-    FILE* f = fopen(filename, "rb");
-    unsigned char info[54];
+		if(imageSize == 6 || (imageSize-6) % 9 == 0) //ervoor zorgen dat de in de 3e bit blauw niet meer wordt aangepast
+		{
+			limiet = 1;
+		}
+		else
+		{
+			limiet = 0;
+		}
 
-    // read the 54-byte header
-    fread(info, sizeof(unsigned char), 54, f); 
+		for (int j = 2; j >= limiet; j--)
+		{
+			k = inputPixels[i + j] >> 7; // 7 => 8ste bit
+			printf("k= %d: \n", k);
+			if (k & 1)
+			{
+				binLetter_8[plaatsBit] = '1';
+			}
+			else
+			{
+				binLetter_8[plaatsBit] = '0';
+			}
+			plaatsBit++;
+			if(plaatsBit >= 8)
+			{
+				plaatsBit = 0;
+				binair_char(); // na 8 pas printen
+			}
+			
 
-    // extract image height and width from header
-    int width = *(int*)&info[18];
-    int height = *(int*)&info[22];
+		}
+		
+		printf("pixel %d: B= %d, G=%d, R=%d\n", i, inputPixels[i], inputPixels[i + 1], inputPixels[i + 2]);
+	}
+	*/
 
-    // allocate 3 bytes per pixel
-    int size = 3 * width * height;
-    unsigned char* data = new unsigned char[size];
 
-    // read the rest of the data at once
-    fread(data, sizeof(unsigned char), size, f); 
-    fclose(f);
 
-    for(i = 0; i < size; i += 3)
-    {
-            // flip the order of every 3 bytes
-            unsigned char tmp = data[i];
-            data[i] = data[i+2];
-            data[i+2] = tmp;
-			printf("%hd", data[i]);
-    }
 	printf("test");
-    return data;
+	//Hard gecodeerde letter A
+	binLetter_8[0] = '0';
+	binLetter_8[1] = '1';
+	binLetter_8[2] = '0';
+	binLetter_8[3] = '0';
+	binLetter_8[4] = '0';
+	binLetter_8[5] = '0';
+	binLetter_8[6] = '0';
+	binLetter_8[7] = '1';
+	binair_char();
+	binLetter_8[0] = '0';
+	binLetter_8[1] = '0';
+	binLetter_8[2] = '1';
+	binLetter_8[3] = '0';
+	binLetter_8[4] = '1';
+	binLetter_8[5] = '0';
+	binLetter_8[6] = '1';
+	binLetter_8[7] = '0';
+	binair_char();
 }
 
 
@@ -142,6 +195,7 @@ void inlezenTXT()
 	fclose(fp);
 	free(inputtekst);
 }
+
 
 int grootteTXT()
 {
@@ -181,24 +235,21 @@ void printbinchar(char character)
     printf("Omgezet in 8 bits binair: %s\n", binLetter_8);
 }
 
+
 void binair_char()
 {
+	printf("binair_char");
     char c = strtol(binLetter_8, 0, 2);
-    printf("Letter is: %c \n\n", c);
+	if(c == '*')
+	{
+		printf("*");
+	}
+	else
+	{
+		printf("Letter is: %c \n\n", c);
+		//tekst[0] = c; // plaats opschuiven
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*

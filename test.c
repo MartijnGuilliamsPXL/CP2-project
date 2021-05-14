@@ -1,5 +1,3 @@
-
-
 /* 
 * to do:
 * +++grootte uitlezen en aanpssen naar 8bits binair
@@ -22,13 +20,12 @@
 #include <stdlib.h>
 #include <string.h>
 #define BESTAND "./test.txt"
-#define BMPINPUTFILE "./test.bmp"
+#define BMPINPUTFILE "test 1.bmp"
 
 void inlezenTXT();
 int grootteTXT();
 void printbinchar(char);
 void binair_char();
-char readBMP(char);
 
 
 char binLetter_8[9] = "";
@@ -84,44 +81,11 @@ int main(int argc, char* argv[]) {
 	printf("DEBUG info: breedte = %d\n", breedte);
 	printf("DEBUG info: hoogte = %d\n", hoogte);
 
-	//printf("%d",
-	readBMP("test 1.bmp");
+
 
     return 0;
 }
 
-unsigned char* readBMP(char* filename)
-{
-    int i;
-    FILE* f = fopen(filename, "rb");
-    unsigned char info[54];
-
-    // read the 54-byte header
-    fread(info, sizeof(unsigned char), 54, f); 
-
-    // extract image height and width from header
-    int width = *(int*)&info[18];
-    int height = *(int*)&info[22];
-
-    // allocate 3 bytes per pixel
-    int size = 3 * width * height;
-    unsigned char* data = new unsigned char[size];
-
-    // read the rest of the data at once
-    fread(data, sizeof(unsigned char), size, f); 
-    fclose(f);
-
-    for(i = 0; i < size; i += 3)
-    {
-            // flip the order of every 3 bytes
-            unsigned char tmp = data[i];
-            data[i] = data[i+2];
-            data[i+2] = tmp;
-			printf("%hd", data[i]);
-    }
-	printf("test");
-    return data;
-}
 
 
 void inlezenTXT()

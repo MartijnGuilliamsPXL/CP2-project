@@ -1,18 +1,25 @@
-/* 
+/*
 * to do:
 * +++grootte uitlezen en aanpssen naar 8bits binair
 * +++cmd argumenten kunnen uitlezen
-* +++txt bestand uitlezen 
+* +++txt bestand uitlezen
 * +++array grootte bepalen door bestand
 * +++tekst omvormen naar binair
 * +++grootte van bmp bestand uitlezen
-* ---letter in bmp bestand verwerken 
-* ---tekst in bmp bestand verwerken 
-* ---bmp bestand uitlezen (hard gecodeerd (letter))
+* +++fout geven bij te weinig of foutive cmd argumenten
+* +++bmp bestand uitlezen
 * +++binair omzetten naar letter
 * +++binair omzetten naar tekst
-* 
-* +++fout geven bij te weinig of foutive cmd argumenten
+* ---nuttige commentaar
+* ---benamingen verbeteren
+* ---letter in bmp bestand verwerken
+* ---tekst in bmp bestand verwerken
+* ---2 verschillende bestanden maken
+*
+* ---Readme
+*
+* Eventuele uitbrijdingen:
+*
 */
 
 
@@ -22,9 +29,10 @@
 #include <string.h>
 
 //Bestanden toekennen
-#define InputTXT "./test.txt"
-#define BMPINPUTFILE "./CP2_Encoded.bmp"
-#define OutputTXT "./schrijf.txt"
+#define InputTXT "./input.txt"
+#define BMPINPUTFILE "./input.bmp"
+#define BMPOUTPUTFILE "./output.bmp"
+#define OutputTXT "./output.txt"
 
 //alle functies
 void schrijvenBMP();
@@ -109,88 +117,14 @@ int main(int argc, char* argv[]) {
 	//	exit(EXIT_FAILURE);
 	//}
 
-
-
-	
-	inlezenTXT();
-    
-	//char_binair('t');
-	
-	binair_char();
-	
-	inlezenBMP();
-
 	schrijvenBMP();
 
-    return 0;
+	inlezenBMP();
+	return 0;
 }
 
 void schrijvenBMP()
 {
-	/*
-	//teste of bmp file opent 
-	FILE* inputFilePointer = fopen(BMPINPUTFILE, "rb"); //maak een file pointer naar de afbeelding
-	if (inputFilePointer == NULL) //Test of het open van de file gelukt is!
-	{
-		printf("BMP file kan niet worden geopend %s\n", BMPINPUTFILE);
-		exit(EXIT_FAILURE);
-	}
-
-	unsigned char bmpHeader[54]; // voorzie een array van 54-bytes voor de BMP Header
-	fread(bmpHeader, sizeof(unsigned char), 54, inputFilePointer); // lees de 54-byte header
-
-	//Informatie uit de header (wikipedia)
-	//Haal de hoogte en breedte uit de header
-	int breedte = *(int*)&bmpHeader[18];
-	int hoogte = *(int*)&bmpHeader[22];
-
-	printf("DEBUG info: breedte = %d\n", breedte);
-	printf("DEBUG info: hoogte = %d\n", hoogte);
-
-	//lezen van de pixels
-	int imageSize = 3 * breedte * hoogte; //ieder pixel heeft 3 byte data: rood, groen en blauw (RGB)
-	unsigned char* inputPixels = (unsigned char*)calloc(imageSize, sizeof(unsigned char)); // allocate een array voor alle pixels
-
-	fread(inputPixels, sizeof(unsigned char), imageSize, inputFilePointer); // Lees alle pixels (de rest van de file)
-
-
-	fseek(inputFilePointer, 54, SEEK_SET);
-	FILE* fp = NULL;
-	fp = fopen("test.txt", "rb");
-	while (!feof(inputFilePointer))
-	{
-		char c = fgetc(fp);
-		for (int i = 0; i < 8; i++)
-		{
-			int bit = fgetc(inputFilePointer);
-			//printf("bit= %d", bit);
-			int lastBit = char_binair(c, i);
-			//printf("%d", lastBit);
-			int singleBitPixel = bit & 1;
-			printf("  %d", bit);
-
-			if (singleBitPixel != lastBit && singleBitPixel < lastBit)
-			{
-				fputc(bit++, fp);
-			}
-			else if (singleBitPixel != lastBit && singleBitPixel > lastBit)
-			{
-				fputc(bit--, fp);
-			}
-		}
-	}
-	//fputc
-
-
-
-	fclose(inputFilePointer);
-	*/
-}
-
-
-void inlezenBMP()
-{
-	
 	//teste of bmp file opent 
 	FILE* inputFilePointer = fopen(BMPINPUTFILE, "rb"); //maak een file pointer naar de afbeelding
 	if (inputFilePointer == NULL) //Test of het open van de file gelukt is!
@@ -215,8 +149,84 @@ void inlezenBMP()
 	unsigned char* inputPixels = (unsigned char*)calloc(imageSize, sizeof(unsigned char)); // allocate een array voor alle pixels
 
 	fread(inputPixels, sizeof(unsigned char), imageSize, inputFilePointer); // Lees alle pixels (de rest van de file)
-	
-	
+
+
+	fseek(inputFilePointer, 54, SEEK_SET); //54 byte overslaan (Header)
+	FILE* fp = NULL;
+	fp = fopen(InputTXT, "rb");
+
+	FILE* outputFilePointer = NULL;
+	outputFilePointer = fopen(BMPOUTPUTFILE, "wb"); //nieuwe bmp aanmaken voor secret message in te schrijven
+
+	fwrite(bmpHeader,sizeof(char),sizeof(bmpHeader), outputFilePointer); //header toevoegen aan output bestand
+
+	while (!feof(inputFilePointer))
+	{
+		char c = fgetc(fp);
+		for (int i = 0; i < 8; i++)
+		{
+			int bit = fgetc(inputFilePointer);
+
+			int lastBit = char_binair(c, i);
+
+			int singleBitPixel = bit & 1; //gaat een 0 of 1 teruggeven 
+			//printf("bit = %d ", bit);
+			//printf("singleBitPixel = %d ", singleBitPixel);
+			//printf("lastBit = %d ", lastBit);
+			if (singleBitPixel < lastBit)
+			{
+				bit++;
+				fputc(bit, outputFilePointer);
+				printf("bit = %d ", bit);
+			}
+			else if (singleBitPixel > lastBit)
+			{
+				bit--;
+				fputc(bit, outputFilePointer);
+				printf("bit = %d ", bit);
+			}
+			else
+			{
+				fputc(bit, outputFilePointer);
+				printf("bit = %d ", bit);
+			}
+		}
+		printf("\n");
+	}
+
+	fclose(inputFilePointer);
+	fclose(outputFilePointer);
+	fclose(fp);
+}
+
+
+void inlezenBMP()
+{
+	//teste of bmp file opent 
+	FILE* inputFilePointer = fopen(BMPOUTPUTFILE, "rb"); //maak een file pointer naar de afbeelding
+	if (inputFilePointer == NULL) //Test of het open van de file gelukt is!
+	{
+		printf("BMP file kan niet worden geopend %s\n", BMPOUTPUTFILE);
+		exit(EXIT_FAILURE);
+	}
+
+	unsigned char bmpHeader[54]; // voorzie een array van 54-bytes voor de BMP Header
+	fread(bmpHeader, sizeof(unsigned char), 54, inputFilePointer); // lees de 54-byte header
+
+	//Haal de hoogte en breedte uit de header
+	int breedte = *(int*)& bmpHeader[18];
+	int hoogte = *(int*)& bmpHeader[22];
+
+	printf("DEBUG info: breedte = %d\n", breedte);
+	printf("DEBUG info: hoogte = %d\n", hoogte);
+
+	//lezen van de pixels
+	int imageSize = 3 * breedte * hoogte; //ieder pixel heeft 3 byte data: rood, groen en blauw (RGB)
+	unsigned char* inputPixels = (unsigned char*)calloc(imageSize, sizeof(unsigned char)); // allocate een array voor alle pixels
+
+	fread(inputPixels, sizeof(unsigned char), imageSize, inputFilePointer); // Lees alle pixels (de rest van de file)
+
+
 	fseek(inputFilePointer, 54, SEEK_SET);
 	FILE* fp = NULL;
 	fp = fopen(OutputTXT, "wb");
@@ -255,7 +265,7 @@ void inlezenTXT()
 	else
 	{
 		while (fgets(inputtekst, 20, fp) != NULL)
-		printf("\n%s\n\n", inputtekst);
+			printf("\n%s\n\n", inputtekst);
 	}
 	fclose(fp);
 	free(inputtekst);
@@ -279,7 +289,7 @@ int grootteTXT()
 }
 
 
-int char_binair(char character, int i)
+int char_binair(char character, int i) 
 {
 	return((character >> (i)) & 1);
 }
@@ -287,8 +297,7 @@ int char_binair(char character, int i)
 
 char binair_char()
 {
-	char c = strtol(binChar, 0, 2);
-	return c;
+	return strtol(binChar, 0, 2);
 }
 
 
@@ -297,21 +306,21 @@ typedef struct _iobuf
 
 {
 
-    char* _ptr;
+	char* _ptr;
 
-    int _cnt;
+	int _cnt;
 
-    char* _base;
+	char* _base;
 
-    int _flag;
+	int _flag;
 
-    int _file;
+	int _file;
 
-    int _charbuf;
+	int _charbuf;
 
-    int _bufsiz;
+	int _bufsiz;
 
-    char* _tmpfname;
+	char* _tmpfname;
 
 } FILE;
 

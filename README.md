@@ -7,17 +7,38 @@
 # CP2-project
 &nbsp;&nbsp;C-program that encrypts a message in a BMP file and decrypts the BMP file to a secret massage.
 
+# How to use
+
+- General help function
+```
+--help
+```
+- Help function of compress
+```
+--help -c
+```
+- Help function of decompress
+```
+--help -d
+```
+
 # How to compile
+```
+gcc -Wall -pedantic -c lib.c -o lib.o
+```
+```
+gcc -Wall -pedantic main.c lib.o -o Project
+```
 
-1)  gcc -Wall -pedantic -c lib.c -o lib.o
+&nbsp;**Compress**
+```
+Project.exe -c -s inputfile.txt -i meme.bmp -o memeOut.bmp
+```
 
-2)  gcc -Wall -pedantic main.c lib.o -o Project
-
-&nbsp;Compress:
-- Project.exe -c -s inputfile.txt -i meme.bmp -o memeOut.bmp
-
-&nbsp;Decompress:
-- Project.exe -d -i memeOut.bmp -o bericht.txt
+&nbsp;**Decompress**
+```
+Project.exe -d -i memeOut.bmp -o bericht.txt
+```
 
 # Bibliography
 

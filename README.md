@@ -1,3 +1,7 @@
+# Authors:
+- Gijs Jackers
+- Martijn Guilliams
+
 # CP2-project:
 
 C-program that encrypts a message in a BMP file and decrypts the BMP file to a secret massage

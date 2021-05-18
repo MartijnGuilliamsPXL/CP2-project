@@ -1,34 +1,34 @@
-# Authors:
-- Gijs Jackers
-- Martijn Guilliams
+# Authors
+- **Gijs Jackers & Martijn Guilliams**
+- *Studenten PXL-Digital*
+- *Elektronica-ICT* 
+- *PBEAI-B*
 
-# CP2-project:
+# CP2-project
+&nbsp;&nbsp;C-program that encrypts a message in a BMP file and decrypts the BMP file to a secret massage.
 
-C-program that encrypts a message in a BMP file and decrypts the BMP file to a secret massage
+# How to compile
 
-# How to compile:
+1)  gcc -Wall -pedantic -c lib.c -o lib.o
 
-gcc -Wall -pedantic -c lib.c -o lib.o
+2)  gcc -Wall -pedantic main.c lib.o -o Project
 
-gcc -Wall -pedantic main.c lib.o -o Project
-
-Compress:
+&nbsp;Compress:
 - Project.exe -c -s inputfile.txt -i meme.bmp -o memeOut.bmp
 
-Decompress:
+&nbsp;Decompress:
 - Project.exe -d -i memeOut.bmp -o bericht.txt
 
+# Bibliography
 
-# Bibliography: 
-
-Char to binary:  
+&nbsp;Char to binary:  
 - https://stackoverflow.com/questions/7863499/conversion-of-char-to-binary-in-c 
 
-Convert binary to text:
+&nbsp;Convert binary to text:
 - https://www.c-programming-simple-steps.com/binary-to-text.html 
 
-Cmd argumenten:
+&nbsp;Cmd argumenten:
 - https://stackoverflow.com/questions/20076001/how-do-i-create-a-help-option-in-a-command-line-program-in-c-c 
 
-Fputc explanation:
+&nbsp;Fputc explanation:
 - https://www.geeksforgeeks.org/fgetc-fputc-c/ 

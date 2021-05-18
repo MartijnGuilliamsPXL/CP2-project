@@ -1,4 +1,0 @@
-C:\Users\Martijn Guilliams\source\repos\Project1\Debug\Project1.exe
-C:\Users\Martijn Guilliams\source\repos\Project1\Debug\Project1.pdb
-C:\Users\Martijn Guilliams\Source\Repos\CP2-project\Debug\Project1.exe
-C:\Users\Martijn Guilliams\Source\Repos\CP2-project\Debug\Project1.pdb

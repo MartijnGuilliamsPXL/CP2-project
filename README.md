@@ -2,6 +2,18 @@
 
 C-program that encrypts a message in a BMP file and decrypts the BMP file to a secret massage
 
+# How to compile:
+
+gcc -Wall -pedantic -c lib.c -o lib.o
+
+gcc -Wall -pedantic main.c lib.o -o Project
+
+Compress:
+- Project.exe -c -s inputfile.txt -i meme.bmp -o memeOut.bmp
+
+Decompress:
+- Project.exe -d -i memeOut.bmp -o bericht.txt
+
 
 # Bibliography: 
 

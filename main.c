@@ -12,8 +12,8 @@
 * +++binair omzetten naar tekst
 * ---nuttige commentaar
 * ---benamingen verbeteren
-* ---letter in bmp bestand verwerken
-* ---tekst in bmp bestand verwerken
+* +++letter in bmp bestand verwerken
+* +++tekst in bmp bestand verwerken
 * ---2 verschillende bestanden maken
 *
 * ---Readme
@@ -163,7 +163,7 @@ void schrijvenBMP()
 	while (!feof(inputFilePointer))
 	{
 		char c = fgetc(fp);
-		for (int i = 0; i < 8; i++)
+		for (int i = 7; i >= 0; i--)
 		{
 			int bit = fgetc(inputFilePointer);
 
@@ -177,21 +177,22 @@ void schrijvenBMP()
 			{
 				bit++;
 				fputc(bit, outputFilePointer);
-				printf("bit = %d ", bit);
+				//printf("bit = %d ", bit);
 			}
 			else if (singleBitPixel > lastBit)
 			{
 				bit--;
 				fputc(bit, outputFilePointer);
-				printf("bit = %d ", bit);
+				//printf("bit = %d ", bit);
 			}
 			else
 			{
 				fputc(bit, outputFilePointer);
-				printf("bit = %d ", bit);
+				//printf("bit = %d ", bit);
 			}
+			//printf("bit = %d ", bit);
 		}
-		printf("\n");
+		//printf("\n");
 	}
 
 	fclose(inputFilePointer);
@@ -238,7 +239,9 @@ void inlezenBMP()
 		{
 			int bit = fgetc(inputFilePointer);
 			int singleBitPixel = bit & 1;
+			//printf(" %d", bit);
 			binChar[i] = singleBitPixel + '0';
+			//printf("letter; %c", binChar[i]);
 		}
 		laatsteChar = binair_char();
 		fputc(laatsteChar, fp);
@@ -297,7 +300,9 @@ int char_binair(char character, int i)
 
 char binair_char()
 {
-	return strtol(binChar, 0, 2);
+	char c = strtol(binChar, 0, 2);
+	//printf("letter: %c\n", c);
+	return c;
 }
 
 
